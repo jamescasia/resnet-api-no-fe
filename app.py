@@ -15,9 +15,7 @@ weights = ResNet50_Weights.DEFAULT
 model = resnet50(weights=weights)
 model.eval()
 preprocess = weights.transforms()
-
-yolo = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained = True)
-
+ 
    
 @app.route('/')  
 @app.route('/classification/gui', methods=['GET'])
@@ -27,15 +25,7 @@ def gui():
 @app.route('/classification/cli', methods=['GET'])
 def cli():
     return render_template('classification/cli.html')
- 
-@app.route('/detection/gui', methods=['GET'])
-def dgui():
-    return render_template('detection/gui.html')
-
-@app.route('/detection/cli', methods=['GET'])
-def dcli():
-    return render_template('detection/cli.html')
- 
+  
 @app.route('/about', methods=['GET'])
 def about():
     return render_template('about.html'  ) 
@@ -70,36 +60,7 @@ def classify():
             img_url = f"{url_for('static', filename=f'/images/resnet/{filename}')}"
         ) 
 
-
-@app.route('/detection/gui', methods=['POST']) 
-def detect(): 
-
-    clear_dir('./static/images/yolo/') 
-    if 'file' not in request.files:
-        return render_template('detection/gui.html', msg='No file f')
-
-    file = request.files['file']
-    if file.filename == '':
-        return render_template('detection/gui.html', msg='No file selected')
-
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        path = f'./static/images/yolo/{filename}'
-        file.save(path)
  
- 
-        results = yolo([path])
-        r = results.render()
-        r = np.asarray(r).squeeze(0) 
-        res_img = Image.fromarray(r)
-        res_path = './static/images/yolo/res_yolo.jpg'
-        res_img.save(fp = res_path)  
-
-        return render_template(
-            'detection/gui.html', res_img_url = f"{url_for('static', filename=f'images/yolo/res_yolo.jpg')}",
-            img_url = f"{url_for('static', filename=f'images/yolo/{filename}')}",
-            results = results.pandas().xyxy[0].transpose().to_dict()
-        )
 
 @app.route('/classify', methods=['POST', 'GET'])
 def classify_link(): 
@@ -113,19 +74,7 @@ def classify_link():
     category_name = weights.meta["categories"][class_id] 
     return  f"{category_name}: {100 * score:.1f}%" 
 
-
-@app.route('/detect', methods=['POST', 'GET'])
-def detect_link():  
-    url = request.get_json()['url']  
-    
-    results = yolo([url])
-    r = results.render()
-    r = np.asarray(r).squeeze(0) 
-    res_img = Image.fromarray(r)
-    res_path = f'static/images/yolo/res_yolo.jpg'
-    res_img.save(fp = res_path)
-    return  {'detections': results.pandas().xyxy[0].transpose().to_json() }
-
+ 
 def clear_dir(dir_path):
     for file in os.listdir(dir_path):
         os.remove(f'{dir_path}/{file}') 
