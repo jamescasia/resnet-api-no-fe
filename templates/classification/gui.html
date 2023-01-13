@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+ 
+{% block container %}
+<div class="home">
+    <label for="process">Choose a process</label>
+    <select name="process" name="process" onchange="javascript:location.href = this.value;">
+        <option value="/classification/gui" selected>Classification</option>
+        <option value="/detection/gui">Detection</option> 
+        <option value="/about">About</option> 
+    </select>
+<h1>Classification</h1>
+<h3>with Pytorch ResNet50</h3>
+
+{{msg}}
+
+ 
+<label for="mode">Choose a mode</label>
+<select name="mode" name="mode" onchange="javascript:location.href = this.value;">
+    <option value="/classification/gui" selected>GUI</option>
+    <option value="/classification/cli">CLI</option>  
+</select>
+<br>
+<br>
+<form method="post" enctype="multipart/form-data" >
+    {{img_path}}
+    <input type="file" name="file" id="img_upload"><br><br>
+ 
+    <img id="image" height="400px" src={{img_url}}>
+   
+    <br>
+    <input type="submit" value="Classify">
+</form> 
+ 
+<br>
+<div>{{result}}</div>
+</div>
+<script>
+    document.getElementById('img_upload').onchange = function ( ) { 
+   var src = URL.createObjectURL(this.files[0])
+  document.getElementById('image').src = src
+}
+</script>
+{% endblock %}

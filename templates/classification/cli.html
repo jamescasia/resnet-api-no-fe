@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+ 
+{% block container %}
+<div class="home">
+    <label for="process">Choose a process</label>
+    <select name="process" name="process" onchange="javascript:location.href = this.value;">
+        <option value="/classification/gui" selected>Classification</option>
+        <option value="/detection/gui">Detection</option> 
+        <option value="/about">About</option> 
+    </select>
+<h1>Classification</h1>
+<h3>with Pytorch ResNet50</h3>
+
+{{msg}}
+
+<label for="mode">Choose a mode</label>
+<select name="mode" name="mode" onchange="javascript:location.href = this.value;">
+    <option value="/classification/gui">GUI</option>
+    <option value="/classification/cli" selected>CLI</option>  
+</select>
+<br>
+<br>
+<table border="1">
+<tr>
+    <td><strong>curl</strong></td>
+    <td>curl --request POST \
+        --url BASE_URL/classify \
+        --header 'Content-Type: application/json' \
+        --data '{
+          "url": IMG_URL
+        }'</td>
+</tr>
+<tr>
+    <td><strong>wget</strong></td>
+    <td>wget --quiet \
+    --method POST \
+    --header 'Content-Type: application/json' \
+    --body-data '{\n	"url": IMG_URL \
+    --output-document \
+    - BASE_URL/classify</td>
+</tr>
+ </table>
+<br> 
+</div>
+<script>
+    document.getElementById('img_upload').onchange = function ( ) { 
+   var src = URL.createObjectURL(this.files[0])
+  document.getElementById('image').src = src
+}
+</script>
+{% endblock %}
