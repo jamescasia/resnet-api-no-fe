@@ -1,4 +1,4 @@
 resnet-api/
 .DS_* 
 images/
-__*
+__pycache__
