@@ -1,4 +1,3 @@
-resnet-api/
-.DS_* 
-images/
+env/
+.DS_*  
 __pycache__
