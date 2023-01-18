@@ -4,7 +4,7 @@
 <div class="home">
     <label for="process">Choose a process</label>
     <select name="process" name="process" onchange="javascript:location.href = this.value;">
-        <option value="/classification/gui" selected>Classification</option> 
+        <option value="/gui" selected>Classification</option>
         <option value="/about">About</option> 
     </select>
 <h1>Image Classification</h1>
@@ -12,34 +12,26 @@
 
 {{msg}}
 
+ 
 <label for="mode">Choose a mode</label>
 <select name="mode" name="mode" onchange="javascript:location.href = this.value;">
-    <option value="/classification/gui">GUI</option>
-    <option value="/classification/cli" selected>CLI</option>  
+    <option value="/gui" selected>GUI</option>
+    <option value="/cli">CLI</option>  
 </select>
 <br>
 <br>
-<table border="1">
-<tr>
-    <td><strong>curl</strong></td>
-    <td>curl --request POST \
-        --url BASE_URL/classify \
-        --header 'Content-Type: application/json' \
-        --data '{
-          "url": IMG_URL
-        }'</td>
-</tr>
-<tr>
-    <td><strong>wget</strong></td>
-    <td>wget --quiet \
-    --method POST \
-    --header 'Content-Type: application/json' \
-    --body-data '{\n	"url": IMG_URL \
-    --output-document \
-    - BASE_URL/classify</td>
-</tr>
- </table>
-<br> 
+<form method="post" enctype="multipart/form-data" >
+    {{img_path}}
+    <input type="file" name="file" id="img_upload"><br><br>
+ 
+    <img id="image" height="400px" src={{img_url}}>
+   
+    <br>
+    <input type="submit" value="Classify">
+</form> 
+ 
+<br>
+<div>{{result}}</div>
 </div>
 <script>
     document.getElementById('img_upload').onchange = function ( ) { 
