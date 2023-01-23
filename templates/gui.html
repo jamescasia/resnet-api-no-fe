@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+ 
+{% block container %}
+<div class="home"> 
+<h1>Image Classification</h1>
+<h3>with Pytorch ResNet50</h3>  
+<h2>CLI</h2>
+<table border="1">
+    <tr>
+        <td><strong>curl</strong></td>
+        <td>curl --request GET \
+            --url BASE_URL/classify \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "url": IMG_URL
+          }'</td>
+    </tr>
+    <tr>
+        <td><strong>wget</strong></td>
+        <td>wget --quiet \
+        --method POST \
+        --header 'Content-Type: application/json' \
+        --body-data '{\n	"url": IMG_URL \
+        --output-document \
+        - BASE_URL/classify</td>
+    </tr>
+     </table>
+</div>
+
+<h2>GUI</h2>
+<form method="post" enctype="multipart/form-data" >
+    {{img_path}}
+    <input type="file" name="file" id="img_upload"><br><br>
+ 
+    <img id="image" height="400px" src={{img_url}}>
+   
+    <br>
+    <input type="submit" value="Classify">
+</form> 
+ 
+<br>
+<div>{{result}}</div>
+<script>
+    document.getElementById('img_upload').onchange = function ( ) { 
+   var src = URL.createObjectURL(this.files[0])
+  document.getElementById('image').src = src
+}
+</script>
+{% endblock %}
