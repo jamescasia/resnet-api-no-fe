@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve resnet-api-no-fe
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/resnet-api-no-fe
+Environment="PATH=/home/ubuntu/resnet-api-no-fe/env/bin"
+ExecStart=/home/ubuntu/resnet-api-no-fe/env/bin/gunicorn --workers 4 --bind unix:resnet-api-no-fe.sock -m 007 wsgi:app
+
+[Install]
+WantedBy=multi-user.target
