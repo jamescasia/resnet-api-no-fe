@@ -20,7 +20,7 @@ def create_app():
         
         try:
             external = request.args.get('external')
-            if external:
+            if external == 'true':
                 url = io.BytesIO(urllib.request.urlopen(request.args.get('url')).read())
                 img = Image.open(url)
                 batch = preprocess(img).unsqueeze(0) 
