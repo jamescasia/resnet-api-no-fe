@@ -19,17 +19,40 @@ def create_app():
         url = io.BytesIO(urllib.request.urlopen(request.get_json()['url']).read())
         img = Image.open(url)
         
-        batch = preprocess(img).unsqueeze(0) 
-        prediction = model(batch).squeeze(0).softmax(0)
-        class_id = prediction.argmax().item()
-        score = prediction[class_id].item()
-        category_name = weights.meta["categories"][class_id] 
-        return  { 'class': category_name, 'confidence': float("{:.2f}".format(score)) } 
+        try:
+            batch = preprocess(img).unsqueeze(0) 
+            prediction = model(batch).squeeze(0).softmax(0)
+            class_id = prediction.argmax().item()
+            score = prediction[class_id].item()
+            category_name = weights.meta["categories"][class_id] 
+        except:
+            return {'error': 'UndefinedError'}, 400
+        return  { 'class': category_name, 'confidence': float("{:.2f}".format(score)) }, 200
     
     @app.route('/')   
     def gui():
         return render_template('gui.html')
 
+    @app.route('/upload', methods=['POST'])  
+    def upload():
+        clear_dir('./static/images/') 
+        if 'file' not in request.files:
+            return render_template('gui.html', msg='No file found')
+
+        file = request.files['file']
+        if file.filename == '':
+            return render_template('gui.html', msg='No file selected')
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            path = f'static/images/{filename}'
+            file.save(path)
+ 
+
+            return { "code": "Success", "img_url" : f"{url_for('static', filename=f'/images/{filename}')}"}, 200
+        else:
+            return { "error": "FileNotAllowed"}, 400
+    
     @app.route('/', methods=['POST'])  
     def classify_gui():
         clear_dir('./static/images/') 
