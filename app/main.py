@@ -36,19 +36,17 @@ def create_app():
     @app.route('/upload', methods=['POST'])  
     def upload():
         clear_dir('./static/images/') 
-        if 'file' not in request.files:
-            return render_template('gui.html', msg='No file found')
+        if 'image' not in request.files:
+            return { "error": "NoImageFound"}, 400
 
-        file = request.files['file']
+        file = request.files['image']
         if file.filename == '':
-            return render_template('gui.html', msg='No file selected')
+            return { "error": "NoImageFound"}, 400
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             path = f'static/images/{filename}'
             file.save(path)
- 
-
             return { "code": "Success", "img_url" : f"{url_for('static', filename=f'/images/{filename}')}"}, 200
         else:
             return { "error": "FileNotAllowed"}, 400
