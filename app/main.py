@@ -14,7 +14,7 @@ def create_app():
     model.eval()
     preprocess = weights.transforms()
 
-    @app.route('/classify')
+    @app.route('/classify', methods=['POST'])
     def classify(): 
         url = io.BytesIO(urllib.request.urlopen(request.get_json()['url']).read())
         img = Image.open(url)
