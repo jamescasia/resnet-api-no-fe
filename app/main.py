@@ -16,10 +16,10 @@ def create_app():
 
     @app.route('/classify', methods=['POST'])
     def classify(): 
-        url = io.BytesIO(urllib.request.urlopen(request.get_json()['url']).read())
-        img = Image.open(url)
         
         try:
+            url = io.BytesIO(urllib.request.urlopen(request.args.get('url')).read())
+            img = Image.open(url)
             batch = preprocess(img).unsqueeze(0) 
             prediction = model(batch).squeeze(0).softmax(0)
             class_id = prediction.argmax().item()
