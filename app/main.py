@@ -18,13 +18,24 @@ def create_app():
     def classify(): 
         
         try:
-            url = io.BytesIO(urllib.request.urlopen(request.args.get('url')).read())
-            img = Image.open(url)
-            batch = preprocess(img).unsqueeze(0) 
-            prediction = model(batch).squeeze(0).softmax(0)
-            class_id = prediction.argmax().item()
-            score = prediction[class_id].item()
-            category_name = weights.meta["categories"][class_id] 
+            local = request.args.get('local')
+            if not local:
+                url = io.BytesIO(urllib.request.urlopen(request.args.get('url')).read())
+                img = Image.open(url)
+                batch = preprocess(img).unsqueeze(0) 
+                prediction = model(batch).squeeze(0).softmax(0)
+                class_id = prediction.argmax().item()
+                score = prediction[class_id].item()
+                category_name = weights.meta["categories"][class_id] 
+            else:
+                url = request.args.get('url')
+                img = Image.open(url)    
+                batch = preprocess(img).unsqueeze(0) 
+        
+                prediction = model(batch).squeeze(0).softmax(0)
+                class_id = prediction.argmax().item()
+                score = prediction[class_id].item()
+                category_name = weights.meta["categories"][class_id]  
         except:
             return {'error': 'UndefinedError'}, 400
         return  { 'class': category_name, 'confidence': float("{:.2f}".format(score)) }, 200
