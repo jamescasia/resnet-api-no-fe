@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 import urllib.request,io 
 from PIL import Image 
 import os 
+import sys
 
 def create_app():
 
@@ -36,8 +37,13 @@ def create_app():
                 class_id = prediction.argmax().item()
                 score = prediction[class_id].item()
                 category_name = weights.meta["categories"][class_id]  
-        except:
-            return {'error': 'UndefinedError'}, 400
+                
+        except Exception as error:
+            exc_type, _, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            return {'code': 'Error', 'body': {'msg': str(error), 'type': str(exc_type), 'fname': str(fname), 'line': str(exc_tb.tb_lineno)}}, 400
+
+            # return {'error': 'UndefinedError'}, 400
         return  { 'class': category_name, 'confidence': float("{:.2f}".format(score)) }, 200
     
     @app.route('/')   
