@@ -19,8 +19,8 @@ def create_app():
     def classify(): 
         
         try:
-            local = request.args.get('local')
-            if not local:
+            external = request.args.get('external')
+            if external:
                 url = io.BytesIO(urllib.request.urlopen(request.args.get('url')).read())
                 img = Image.open(url)
                 batch = preprocess(img).unsqueeze(0) 
@@ -29,7 +29,7 @@ def create_app():
                 score = prediction[class_id].item()
                 category_name = weights.meta["categories"][class_id] 
             else:
-                url = request.args.get('url')
+                url = request.args.get('url').replace('/', '', 2)
                 img = Image.open(url)    
                 batch = preprocess(img).unsqueeze(0) 
         
@@ -104,5 +104,5 @@ def clear_dir(dir_path):
         os.remove(f'{dir_path}/{file}') 
     
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in { 'jpg', 'jpeg'}
     
